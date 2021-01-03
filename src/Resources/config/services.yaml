@@ -1,0 +1,9 @@
+services:
+
+  paveldanilin\RequestBodyBundle\EventListener\RequestBodyListener:
+    tags:
+      - { name: kernel.event_listener, event: kernel.controller, priority: 240 }
+
+  paveldanilin\RequestBodyBundle\ArgumentResolver\RequestBodyResolver:
+    tags:
+      - { name: controller.argument_value_resolver, priority: 240 }

@@ -1,0 +1,34 @@
+{
+  "name": "paveldanilin/request-body-bundle",
+  "type": "symfony-bundle",
+  "description": "Symfony RequestBody Bundle",
+  "keywords": ["request-body", "symfony", "bundle"],
+  "license": "MIT",
+  "authors": [{"name": "Pavel Danilin", "email": "pavel.k.danilin@gmail.com"}],
+  "autoload": {
+    "psr-4": {
+      "paveldanilin\\RequestBodyBundle\\": "src"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "paveldanilin\\RequestBodyBundle\\Tests\\": "tests"
+    }
+  },
+  "require": {
+    "php": ">=7.2",
+    "ext-json": "*",
+    "symfony/flex": "^1.0",
+    "symfony/config": "^4.4",
+    "symfony/framework-bundle": "^4.4",
+    "doctrine/annotations": "^1.0",
+    "symfony/validator": "^4.4",
+    "symfony/serializer": "^4.4"
+  },
+  "require-dev": {
+  },
+  "config": {
+    "preferred-install": "dist",
+    "sort-packages": true
+  }
+}
