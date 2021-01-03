@@ -1,11 +1,11 @@
 services:
 
   paveldanilin\RequestBodyBundle\EventListener\RequestBodyListener:
-    arguments: ['annotations.reader']
+    arguments: ['@annotations.reader']
     tags:
       - { name: kernel.event_listener, event: kernel.controller, priority: 240 }
 
   paveldanilin\RequestBodyBundle\ArgumentResolver\RequestBodyResolver:
-    arguments: ['serializer', 'validator']
+    arguments: ['@serializer', '@validator']
     tags:
       - { name: controller.argument_value_resolver, priority: 240 }
