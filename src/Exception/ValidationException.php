@@ -12,7 +12,7 @@ class ValidationException extends BadRequestHttpException
     /** @var  ConstraintViolationListInterface */
     private $constraintViolationList;
 
-    public function __construct(ConstraintViolationListInterface $constraintViolationList, string $message = 'Transfer data object is not valid')
+    public function __construct(ConstraintViolationListInterface $constraintViolationList, string $message)
     {
         parent::__construct($message);
         $this->constraintViolationList = $constraintViolationList;

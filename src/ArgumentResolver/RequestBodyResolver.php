@@ -88,7 +88,7 @@ class RequestBodyResolver implements ArgumentValueResolverInterface
                 $validationErrors = $this->validator->validate($target, null, $requestBody->validationGroups);
             }
             if ($validationErrors->count() > 0) {
-                throw new ValidationException($requestBody->validationError, $validationErrors);
+                throw new ValidationException($validationErrors, $requestBody->validationError ?? 'Transfer data object is not valid');
             }
         }
 
