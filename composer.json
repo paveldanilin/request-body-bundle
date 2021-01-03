@@ -5,16 +5,7 @@
   "keywords": ["request-body", "symfony", "bundle"],
   "license": "MIT",
   "authors": [{"name": "Pavel Danilin", "email": "pavel.k.danilin@gmail.com"}],
-  "autoload": {
-    "psr-4": {
-      "paveldanilin\\RequestBodyBundle\\": "src"
-    }
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "paveldanilin\\RequestBodyBundle\\Tests\\": "tests"
-    }
-  },
+  "minimum-stability": "dev",
   "require": {
     "php": ">=7.2",
     "ext-json": "*",
@@ -26,6 +17,16 @@
     "symfony/serializer": "^4.4"
   },
   "require-dev": {
+  },
+  "autoload": {
+    "psr-4": {
+      "paveldanilin\\RequestBodyBundle\\": "src"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "paveldanilin\\RequestBodyBundle\\Tests\\": "tests"
+    }
   },
   "config": {
     "preferred-install": "dist",
