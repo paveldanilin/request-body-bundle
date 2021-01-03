@@ -74,7 +74,7 @@ class RequestBodyResolver implements ArgumentValueResolverInterface
             );
         } catch (\Throwable $throwable) {
             throw new DeserializationException(
-                $requestBody->deserializationError,
+                $requestBody->deserializationError ?? 'Could not deserialize request body',
                 $throwable
             );
         }
