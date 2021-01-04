@@ -66,18 +66,22 @@ class RequestBodyListener
 
     private function process(ControllerEvent $event, RequestBody $requestBody, \ReflectionMethod $method): void
     {
+        if (empty($event->getRequest()->getContent())) {
+            throw new BadRequestHttpException('The request body is empty.');
+        }
+
         if (empty($requestBody->consumes)) {
             $requestBody->consumes = $this->detectConsumesMediaType($event->getRequest());
         } elseif (false === RequestBody::supports($requestBody->consumes)) {
             throw new \LogicException(
-                "Unknown media format @RequestBody(consumes=$requestBody->consumes)."
+                "Unsupported content type `$requestBody->consumes`."
             );
         }
 
-        if (empty($requestBody->input)) {
-            $requestBody->input = $this->getParameterType($method->getParameters(), $requestBody->param);
-        } elseif (false === \class_exists($requestBody->input)) {
-            throw new \LogicException("Input DTO class not found @RequestBody(input=$requestBody->input).");
+        if (empty($requestBody->type)) {
+            $requestBody->type = $this->getParameterType($method->getParameters(), $requestBody->param);
+        } elseif (false === \class_exists($requestBody->type)) {
+            throw new \LogicException("Type not found `$requestBody->type`.");
         }
 
         $event->getRequest()->attributes->set(RequestBody::REQUEST_ATTRIBUTE, $requestBody);
@@ -85,24 +89,23 @@ class RequestBodyListener
 
     private function detectConsumesMediaType(Request $request): string
     {
-        // Get media type from client request
-
         $requestedMediaType = '';
 
         if ($request->headers->has('Content-Type') && '*/*' !== $request->headers->get('Content-Type')) {
             $requestedMediaType = $request->headers->get('Content-Type');
-        } elseif ($request->headers->has('Accept') && '*/*' !== $request->headers->get('Accept')) {
-            $requestedMediaType = $request->headers->get('Accept');
         }
+        /*elseif ($request->headers->has('Accept') && '*\/*' !== $request->headers->get('Accept')) {
+            $requestedMediaType = $request->headers->get('Accept');
+        }*/
 
         if (empty($requestedMediaType)) {
             throw new BadRequestHttpException(
-                "Could not detect media type by client request. Client must specify one of these headers: `Content-Type` or `Accept`. Or define configuration parameter api.mediatype."
+                "Could not detect media type by client request. Client must specify the `Content-Type` header."
             );
         }
 
         if (false === RequestBody::supports($requestedMediaType)) {
-            throw new BadRequestHttpException("Client requested unknown media type `$requestedMediaType`.");
+            throw new \RuntimeException("Unsupported content type `$requestedMediaType`.");
         }
 
         return $requestedMediaType;
@@ -123,7 +126,7 @@ class RequestBodyListener
         }
 
         throw new \LogicException(
-            "Could not bind to unknown parameter. Parameter `$parameterName` not found."
+            "Parameter not found `$parameterName`."
         );
     }
 
@@ -131,14 +134,14 @@ class RequestBodyListener
     {
         if (false === $parameter->hasType()) {
             throw new \LogicException(
-                "Parameter `{$parameter->name}` does not have type hint."
+                "Parameter does not have type hint `{$parameter->name}`."
             );
         }
 
         $type = (string)$parameter->getType();
 
         if (false === \class_exists($type)) {
-            throw new \LogicException("Class `$type` does not exist.");
+            throw new \LogicException("Type not found `$type`.");
         }
 
         return $type;

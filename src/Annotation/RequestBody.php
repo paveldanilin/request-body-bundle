@@ -28,7 +28,9 @@ use Doctrine\Common\Annotations\Annotation;
 class RequestBody
 {
     public const APPLICATION_JSON = 'application/json';
-    public const REQUEST_ATTRIBUTE = 'app.annotation.request.request_body';
+    public const APPLICATION_XML = 'application/xml';
+
+    public const REQUEST_ATTRIBUTE = 'request_body_bundle.annotation.request.request_body';
 
     /**
      * Method argument name
@@ -50,32 +52,20 @@ class RequestBody
      * If input !== Argument->getType() then mapper will be called
      * @var string
      */
-    public $input;
+    public $type;
 
     /**
      * Symfony validator validation groups
      * validationGroups = {"all"} - validate all assertions
      * @var array<string>
      */
-    public $validationGroups = [];
+    public $validationGroups = ['all'];
 
     /**
-     * Error message for an invalid DTO exception
-     * Macro:
-     *       - {{validation_errors}}
+     * The custom validation error
      * @var string|null
      */
     public $validationError;
-
-    /**
-     * Detail error template
-     * Macro:
-     *       - {{property}}
-     *       - {{message}}
-     *       - {{code}}
-     * @var string
-     */
-    public $validationDetailTemplate;
 
     /**
      * Symfony serializer.deserialize context
@@ -84,13 +74,14 @@ class RequestBody
     public $deserializationContext = [];
 
     /**
+     * The custom deserialization error message
      * @var string|null
      */
     public $deserializationError;
 
+
     /**
-     * RequestBody constructor.
-     * @param array{value:string, param:string, consumes:string, input:string, validationGroups:array} $data
+     * @param array{value:string, param:string, consumes:string, type:string, validationGroups:array} $data
      */
     public function __construct(array $data)
     {
@@ -113,9 +104,9 @@ class RequestBody
             unset($data['consumes']);
         }
 
-        if (isset($data['input'])) {
-            $this->input = $data['input'];
-            unset($data['input']);
+        if (isset($data['type'])) {
+            $this->type = $data['type'];
+            unset($data['type']);
         }
 
         if (isset($data['validationGroups'])) {
@@ -126,11 +117,6 @@ class RequestBody
         if (isset($data['validationError'])) {
             $this->validationError = $data['validationError'];
             unset($data['validationError']);
-        }
-
-        if (isset($data['validationDetailTemplate'])) {
-            $this->validationDetailTemplate = $data['validationDetailTemplate'];
-            unset($data['validationDetailTemplate']);
         }
 
         if (isset($data['deserializationContext'])) {
@@ -160,11 +146,16 @@ class RequestBody
             return 'xml';
         }
 
-        throw new \OutOfRangeException("Could not extract format from media type `$mediaType`");
+        throw new \OutOfRangeException("Could not extract serialization format from media type `$mediaType`");
     }
 
     public static function supports(string $mediaType): bool
     {
-        return $mediaType === static::APPLICATION_JSON;
+        return \in_array($mediaType, self::getSupportedMediaTypes(), true);
+    }
+
+    public static function getSupportedMediaTypes(): array
+    {
+        return [self::APPLICATION_JSON, self::APPLICATION_XML];
     }
 }

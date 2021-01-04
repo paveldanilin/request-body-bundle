@@ -59,43 +59,69 @@ class RequestBodyResolver implements ArgumentValueResolverInterface
         /** @var RequestBody $requestBody */
         $requestBody = $request->attributes->get(RequestBody::REQUEST_ATTRIBUTE);
 
-        // Body is empty
-        if (empty($request->getContent())) {
-            throw new BadRequestHttpException('The request body is empty');
+        $target = $this->deserialize($request, $requestBody);
+
+        $this->validate($target, $requestBody);
+
+        if ($argument->getType() !== $requestBody->type) {
+            throw new \InvalidArgumentException("Type miss match for argument `{$argument->getName()}`.");
         }
 
-        // RequestContent -> Symfony.deserialize -> ArgumentType
+        yield $target;
+    }
+
+    /**
+     * @param Request $request
+     * @param RequestBody $requestBody
+     * @return mixed
+     */
+    private function deserialize(Request $request, RequestBody $requestBody)
+    {
         try {
-            $target = $this->serializer->deserialize(
+            return $this->serializer->deserialize(
                 $request->getContent(),
-                $requestBody->input,
+                $requestBody->type,
                 $requestBody->getSerializationFormat(),
                 $requestBody->deserializationContext
             );
         } catch (\Throwable $throwable) {
             throw new DeserializationException(
                 $requestBody->deserializationError ??
-                \sprintf('Could not deserialize request body [input]=%s [format]=%s', $requestBody->input, $requestBody->getSerializationFormat()),
+                \sprintf(
+                    'Could not deserialize request body [type]=%s [format]=%s',
+                    $requestBody->type,
+                    $requestBody->getSerializationFormat()
+                ),
                 $throwable
             );
         }
+    }
 
-        if(false === empty($requestBody->validationGroups)) {
-            if (1 === \count($requestBody->validationGroups) && 'all' === \strtolower($requestBody->validationGroups[0])) {
-                // validationGroups={"all"}
-                $validationErrors = $this->validator->validate($target);
-            } else {
-                $validationErrors = $this->validator->validate($target, null, $requestBody->validationGroups);
-            }
-            if ($validationErrors->count() > 0) {
-                throw new ValidationException($validationErrors, $requestBody->validationError ?? 'Transfer data object is not valid');
-            }
+    /**
+     * @param mixed $target
+     * @param RequestBody $requestBody
+     */
+    private function validate($target, RequestBody $requestBody): void
+    {
+        if(empty($requestBody->validationGroups)) {
+           return;
         }
 
-        if ($argument->getType() !== $requestBody->input) {
-            throw new \InvalidArgumentException("Type miss match for argument `{$argument->getName()}`");
+        $validationGroups = $requestBody->validationGroups;
+
+        if (1 === \count($validationGroups) && 'all' === \strtolower($validationGroups[0])) {
+            // validationGroups={"all"}
+            $validationErrors = $this->validator->validate($target);
+        } else {
+            // Specific validation groups
+            $validationErrors = $this->validator->validate($target, null, $validationGroups);
         }
 
-        yield $target;
+        if ($validationErrors->count() > 0) {
+            throw new ValidationException(
+                $validationErrors,
+                $requestBody->validationError ?? 'Transfer data object is not valid'
+            );
+        }
     }
 }
