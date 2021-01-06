@@ -1,14 +1,14 @@
 <?php
 
 
-namespace paveldanilin\RequestBodyBundle\Annotation;
+namespace paveldanilin\RequestBodyBundle\Controller\Annotation;
 
 use Doctrine\Common\Annotations\Annotation;
 
 
 /**
  * RequestBody("myParam"):
- * format = Request(Content-Type) ->  Request(Accept) -> error
+ * format = Request(Content-Type) -> error
  * input = Argument->getType()
  * validationGroups = []
  * deserializerContext =[]
@@ -18,7 +18,7 @@ use Doctrine\Common\Annotations\Annotation;
  * validationGroups = []
  * deserializerContext =[]
  *
- * RequestBody("myParam", format="json", input="my\DTO\class"):
+ * RequestBody("myParam", format="json", type="my\DTO\class"):
  * validationGroups = []
  * deserializerContext =[]
  *
@@ -41,7 +41,7 @@ class RequestBody
 
     /**
      * Consumes media type
-     * If null -> Configuration(api.mediatype) -> Request(Content-Type) ->  Request(Accept) -> error
+     * If null -> Request(Content-Type) ->  Request(Accept) -> error
      * @var string
      */
     public $consumes;
@@ -93,10 +93,6 @@ class RequestBody
         if (isset($data['param'])) {
             $this->param = $data['param'];
             unset($data['param']);
-        }
-
-        if (empty($this->param)) {
-            throw new \InvalidArgumentException('Not defined `param` attribute at @RequestBody');
         }
 
         if (isset($data['consumes'])) {

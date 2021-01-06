@@ -6,7 +6,6 @@ symfony.lock
 /config
 /public
 /src/Kernel.php
-/src/Controller/
 /.env
 /.env.local
 /.env.local.php
@@ -16,3 +15,8 @@ symfony.lock
 /var/
 /vendor/
 ###< symfony/framework-bundle ###
+
+###> phpunit/phpunit ###
+/phpunit.xml
+.phpunit.result.cache
+###< phpunit/phpunit ###

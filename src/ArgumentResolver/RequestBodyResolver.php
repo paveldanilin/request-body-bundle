@@ -3,13 +3,12 @@
 
 namespace paveldanilin\RequestBodyBundle\ArgumentResolver;
 
-use paveldanilin\RequestBodyBundle\Annotation\RequestBody;
+use paveldanilin\RequestBodyBundle\Controller\Annotation\RequestBody;
 use paveldanilin\RequestBodyBundle\Exception\DeserializationException;
 use paveldanilin\RequestBodyBundle\Exception\ValidationException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ArgumentValueResolverInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -21,6 +20,7 @@ class RequestBodyResolver implements ArgumentValueResolverInterface
 
     /** @var ValidatorInterface */
     private $validator;
+
 
     public function __construct(SerializerInterface $serializer, ValidatorInterface $validator)
     {
@@ -35,20 +35,14 @@ class RequestBodyResolver implements ArgumentValueResolverInterface
      */
     public function supports(Request $request, ArgumentMetadata $argument)
     {
-        // No annotation
         if (false === $request->attributes->has(RequestBody::REQUEST_ATTRIBUTE)) {
-            return false;
-        }
-
-        // We support only PUT, PATCH, POST  HTTP methods
-        if (false === \in_array($request->getMethod(), ['PUT', 'PATCH', 'POST'])) {
             return false;
         }
 
         /** @var RequestBody $requestBody */
         $requestBody = $request->attributes->get(RequestBody::REQUEST_ATTRIBUTE);
 
-        return $argument->getName() === $requestBody->param;
+        return $argument->getName() === $requestBody->param && $argument->getType() === $requestBody->type;
     }
 
     /**
@@ -62,10 +56,6 @@ class RequestBodyResolver implements ArgumentValueResolverInterface
         $target = $this->deserialize($request, $requestBody);
 
         $this->validate($target, $requestBody);
-
-        if ($argument->getType() !== $requestBody->type) {
-            throw new \InvalidArgumentException("Type miss match for argument `{$argument->getName()}`.");
-        }
 
         yield $target;
     }
@@ -88,9 +78,10 @@ class RequestBodyResolver implements ArgumentValueResolverInterface
             throw new DeserializationException(
                 $requestBody->deserializationError ??
                 \sprintf(
-                    'Could not deserialize request body [type]=%s [format]=%s',
+                    'Could not deserialize request body from [format]=%s to [type]=%s. %s',
+                    $requestBody->getSerializationFormat(),
                     $requestBody->type,
-                    $requestBody->getSerializationFormat()
+                    $throwable->getMessage()
                 ),
                 $throwable
             );

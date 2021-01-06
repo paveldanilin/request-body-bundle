@@ -3,12 +3,13 @@
 
 namespace paveldanilin\RequestBodyBundle\EventListener;
 
-use paveldanilin\RequestBodyBundle\Annotation\RequestBody;
+use paveldanilin\RequestBodyBundle\Controller\Annotation\RequestBody;
 use Doctrine\Common\Annotations\Reader;
 use ReflectionParameter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 
 class RequestBodyListener
@@ -23,7 +24,7 @@ class RequestBodyListener
 
     public function onKernelController(ControllerEvent $event): void
     {
-        if (!$event->isMasterRequest()) {
+        if (!$event->isMasterRequest() || !$this->isHttpMethodSupported($event->getRequest())) {
             return;
         }
 
@@ -47,20 +48,63 @@ class RequestBodyListener
 
             $this->process($event, $requestBody, $reflectionMethod);
 
-        } catch (\ReflectionException $e) {
-            $controllerClass = \get_class($controller);
-            $annotationClass = $this->getClassName(RequestBody::class);
-            throw new \RuntimeException(
-                "Failed to read method annotation @$annotationClass at $controllerClass.$method(): {$e->getMessage()}."
-            );
-        } catch (\LogicException $e) {
-            $controllerClass = \get_class($controller);
-            $annotationClass = $this->getClassName(RequestBody::class);
-            throw new \RuntimeException(
-                "Failed to process method annotation @$annotationClass at $controllerClass.$method(): {$e->getMessage()}.",
-                0,
-                $e
-            );
+        } catch (\ReflectionException | \LogicException $e) {
+            $this->throwServerException($e, $controller, $method);
+        }
+    }
+
+    private function isHttpMethodSupported(Request $request): bool
+    {
+        return \in_array($request->getMethod(), ['PUT', 'PATCH', 'POST', 'DELETE']);
+    }
+
+    /**
+     * @param \Exception $exception
+     * @param mixed $controller
+     * @param string $method
+     */
+    private function throwServerException(\Exception $exception, $controller, string $method): void
+    {
+        $controllerClass = \get_class($controller);
+
+        $annotationClass = $this->getClassName(RequestBody::class);
+
+        throw new HttpException(
+            500,
+            \sprintf(
+                'Failed to process annotation @%s at %s->%s(%s). %s',
+                $annotationClass,
+                $controllerClass,
+                $method,
+                $this->stringifyMethodArguments($controller, $method),
+                $exception->getMessage()
+            ),
+            $exception
+        );
+    }
+
+    /**
+     * @param mixed $controller
+     * @param string $method
+     * @return string
+     */
+    private function stringifyMethodArguments($controller, string $method): string
+    {
+        try {
+            $reflection = new \ReflectionMethod($controller, $method);
+
+            return \implode(',', \array_map(static function (ReflectionParameter $parameter) {
+                $type = $parameter->getType();
+
+                if ($type instanceof \ReflectionNamedType) {
+                    $type = $type->getName();
+                }
+
+                return \sprintf('<%s>%s', $type ?? '', $parameter->getName());
+            }, $reflection->getParameters()));
+
+        } catch (\ReflectionException $exception) {
+            return '';
         }
     }
 
@@ -70,45 +114,67 @@ class RequestBodyListener
             throw new BadRequestHttpException('The request body is empty.');
         }
 
+        // Consumes
+
         if (empty($requestBody->consumes)) {
-            $requestBody->consumes = $this->detectConsumesMediaType($event->getRequest());
-        } elseif (false === RequestBody::supports($requestBody->consumes)) {
+            $requestBody->consumes = $this->getContentType($event->getRequest());
+        }
+
+        if (false === RequestBody::supports($requestBody->consumes)) {
             throw new \LogicException(
                 "Unsupported content type `$requestBody->consumes`."
             );
         }
 
+        // Param
+
+        if (empty($requestBody->param)) {
+            $requestBody->param = $this->getParam($method);
+        }
+
+        // Type
+
         if (empty($requestBody->type)) {
             $requestBody->type = $this->getParameterType($method->getParameters(), $requestBody->param);
-        } elseif (false === \class_exists($requestBody->type)) {
+        }
+
+        if (false === \class_exists($requestBody->type)) {
             throw new \LogicException("Type not found `$requestBody->type`.");
         }
 
         $event->getRequest()->attributes->set(RequestBody::REQUEST_ATTRIBUTE, $requestBody);
     }
 
-    private function detectConsumesMediaType(Request $request): string
+    private function getParam(\ReflectionMethod $method): string
     {
-        $requestedMediaType = '';
+        $numOfParams = $method->getNumberOfParameters();
+
+        if (0 === $numOfParams) {
+            throw new \LogicException('Could not autodetect parameter for body mapping. The method does not have parameters.');
+        }
+
+        if (1 < $numOfParams) {
+            throw new \LogicException('Could not autodetect parameter for body mapping. The method has too many parameters.');
+        }
+
+        return $method->getParameters()[0]->getName();
+    }
+
+    private function getContentType(Request $request): string
+    {
+        $requestContentType = '';
 
         if ($request->headers->has('Content-Type') && '*/*' !== $request->headers->get('Content-Type')) {
-            $requestedMediaType = $request->headers->get('Content-Type');
+            $requestContentType = $request->headers->get('Content-Type');
         }
-        /*elseif ($request->headers->has('Accept') && '*\/*' !== $request->headers->get('Accept')) {
-            $requestedMediaType = $request->headers->get('Accept');
-        }*/
 
-        if (empty($requestedMediaType)) {
+        if (empty($requestContentType)) {
             throw new BadRequestHttpException(
                 "Could not detect media type by client request. Client must specify the `Content-Type` header."
             );
         }
 
-        if (false === RequestBody::supports($requestedMediaType)) {
-            throw new \RuntimeException("Unsupported content type `$requestedMediaType`.");
-        }
-
-        return $requestedMediaType;
+        return $requestContentType;
     }
 
     /**
@@ -126,25 +192,27 @@ class RequestBodyListener
         }
 
         throw new \LogicException(
-            "Parameter not found `$parameterName`."
+            "Parameter `$parameterName` not found."
         );
     }
 
     private function getType(ReflectionParameter $parameter): string
     {
-        if (false === $parameter->hasType()) {
+        if (false === $parameter->hasType() || null === $parameter->getType()) {
             throw new \LogicException(
-                "Parameter does not have type hint `{$parameter->name}`."
+                "Parameter `{$parameter->name}` does not have type hint."
             );
         }
 
-        $type = (string)$parameter->getType();
+        $type = $parameter->getType();
 
-        if (false === \class_exists($type)) {
-            throw new \LogicException("Type not found `$type`.");
+        if ($type instanceof \ReflectionNamedType) {
+            return $type->getName();
         }
 
-        return $type;
+        throw new \LogicException(
+            "Parameter `{$parameter->name}` does not have type hint."
+        );
     }
 
     private function getClassName(string $class): string
