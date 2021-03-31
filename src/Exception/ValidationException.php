@@ -9,8 +9,7 @@ use Symfony\Component\Validator\ConstraintViolationListInterface;
 
 class ValidationException extends BadRequestHttpException
 {
-    /** @var  ConstraintViolationListInterface */
-    private $constraintViolationList;
+    private ConstraintViolationListInterface $constraintViolationList;
 
     public function __construct(ConstraintViolationListInterface $constraintViolationList, string $message)
     {

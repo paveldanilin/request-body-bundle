@@ -25,11 +25,8 @@ class RequestBodyTestCase extends TestCase
     /** @var \PHPUnit\Framework\MockObject\MockObject|HttpKernelInterface */
     protected $kernel;
 
-    /** @var RequestBodyListener */
-    protected $listener;
-
-    /** @var RequestBodyResolver */
-    protected $resolver;
+    protected RequestBodyListener $listener;
+    protected RequestBodyResolver $resolver;
 
 
     protected function init(): void

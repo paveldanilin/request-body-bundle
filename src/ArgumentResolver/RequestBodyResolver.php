@@ -15,11 +15,8 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class RequestBodyResolver implements ArgumentValueResolverInterface
 {
-    /** @var SerializerInterface */
-    private $serializer;
-
-    /** @var ValidatorInterface */
-    private $validator;
+    private SerializerInterface $serializer;
+    private ValidatorInterface $validator;
 
 
     public function __construct(SerializerInterface $serializer, ValidatorInterface $validator)
@@ -33,7 +30,7 @@ class RequestBodyResolver implements ArgumentValueResolverInterface
      * @param ArgumentMetadata $argument
      * @return bool
      */
-    public function supports(Request $request, ArgumentMetadata $argument)
+    public function supports(Request $request, ArgumentMetadata $argument): bool
     {
         if (false === $request->attributes->has(RequestBody::REQUEST_ATTRIBUTE)) {
             return false;

@@ -37,14 +37,14 @@ class RequestBody
      * Mandatory
      * @var string
      */
-    public $param;
+    public string $param;
 
     /**
      * Consumes media type
      * If null -> Request(Content-Type) ->  Request(Accept) -> error
      * @var string
      */
-    public $consumes;
+    public string $consumes;
 
     /**
      * Input DTO class
@@ -52,32 +52,32 @@ class RequestBody
      * If input !== Argument->getType() then mapper will be called
      * @var string
      */
-    public $type;
+    public string $type;
 
     /**
      * Symfony validator validation groups
      * validationGroups = {"all"} - validate all assertions
      * @var array<string>
      */
-    public $validationGroups = ['all'];
+    public array $validationGroups = ['all'];
 
     /**
      * The custom validation error
      * @var string|null
      */
-    public $validationError;
+    public ?string $validationError;
 
     /**
      * Symfony serializer.deserialize context
      * @var array<mixed>
      */
-    public $deserializationContext = [];
+    public array $deserializationContext = [];
 
     /**
      * The custom deserialization error message
      * @var string|null
      */
-    public $deserializationError;
+    public ?string $deserializationError;
 
 
     /**

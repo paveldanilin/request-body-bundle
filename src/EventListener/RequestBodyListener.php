@@ -14,8 +14,7 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class RequestBodyListener
 {
-    /** @var Reader */
-    private $reader;
+    private Reader $reader;
 
     public function __construct(Reader $annotationReader)
     {

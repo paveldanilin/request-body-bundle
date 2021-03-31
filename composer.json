@@ -1,7 +1,7 @@
 {
 	"name": "paveldanilin/request-body-bundle",
 	"type": "symfony-bundle",
-	"description": "Symfony RequestBody Bundle",
+	"description": "A Symfony RequestBody Bundle",
 	"keywords": [
 		"request-body",
 		"symfony",
@@ -16,7 +16,7 @@
 		}
 	],
 	"require": {
-		"php": ">=7.2",
+		"php": ">=7.4",
 		"ext-json": "*",
 		"symfony/framework-bundle": "^4.4|^5.0",
 		"symfony/validator": "^4.4|^5.0",

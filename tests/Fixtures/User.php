@@ -13,5 +13,5 @@ class User
      *
      * @var string
      */
-    public $name;
+    public string $name = '';
 }
