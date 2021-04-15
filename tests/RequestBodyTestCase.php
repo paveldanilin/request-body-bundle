@@ -8,6 +8,7 @@ use Doctrine\Common\Annotations\AnnotationReader;
 use paveldanilin\RequestBodyBundle\ArgumentResolver\RequestBodyResolver;
 use paveldanilin\RequestBodyBundle\Controller\Annotation\RequestBody;
 use paveldanilin\RequestBodyBundle\EventListener\RequestBodyListener;
+use paveldanilin\RequestBodyBundle\Service\RequestBodyService;
 use PHPStan\Testing\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
@@ -35,9 +36,11 @@ class RequestBodyTestCase extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->listener = new RequestBodyListener(new AnnotationReader());
+        $requestBodyService = new RequestBodyService(new AnnotationReader(), $this->createSerializer(), $this->createValidator());
 
-        $this->resolver = new RequestBodyResolver($this->createSerializer(), $this->createValidator());
+        $this->listener = new RequestBodyListener($requestBodyService);
+
+        $this->resolver = new RequestBodyResolver($requestBodyService);
     }
 
     /**
