@@ -1,5 +1,17 @@
 services:
 
+  # Console commands
+  show_usage_command:
+    class: paveldanilin\RequestBodyBundle\Command\ShowUsageCommand
+    calls:
+      - setScanDir: [ '%kernel.project_dir%/src' ]
+      - setAnnotationScanner: [ '@annotation_scanner' ]
+
+  # Common services
+  annotation_scanner:
+    class: paveldanilin\RequestBodyBundle\Service\AnnotationScanner
+    arguments: ['@annotations.reader']
+
   request_body_service:
     class: paveldanilin\RequestBodyBundle\Service\RequestBodyService
     arguments: ['@annotations.reader', '@serializer', '@validator']
