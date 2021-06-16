@@ -1,12 +1,13 @@
 services:
 
   # Console commands
-  show_usage_command:
-    class: paveldanilin\RequestBodyBundle\Command\ShowUsageCommand
+  paveldanilin\RequestBodyBundle\Command\ShowUsageCommand:
     public: true
     calls:
       - setScanDir: [ '%kernel.project_dir%/src' ]
       - setAnnotationScanner: [ '@annotation_scanner' ]
+    tags:
+      - { name: 'console.command', command: 'rb:show' }
 
   # Common services
   annotation_scanner:
