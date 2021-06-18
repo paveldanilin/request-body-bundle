@@ -22,6 +22,7 @@ class DebugCommandTest extends KernelTestCase
         $cmdTester->execute([]);
 
         $output = $cmdTester->getDisplay();
+        //print "\n" . $output . "\n";
 
         static::assertNotEmpty($output);
     }

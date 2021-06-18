@@ -20,7 +20,6 @@ final class AnnotationScanner implements AnnotationScannerInterface
     /**
      * @param string $dir
      * @return \Generator
-     * @throws \ReflectionException
      */
     public function in(string $dir)
     {
@@ -33,7 +32,11 @@ final class AnnotationScanner implements AnnotationScannerInterface
                 continue;
             }
 
-            $classReflection = new \ReflectionClass($namespace . '\\' .  $class);
+            try {
+                $classReflection = new \ReflectionClass($namespace . '\\' . $class);
+            } catch (\Throwable $e) {
+                continue;
+            }
 
             // { methodName: [...annotations,] }
             $methodAnnotations = [];
@@ -83,7 +86,7 @@ final class AnnotationScanner implements AnnotationScannerInterface
                 if ($tokens[$i][0] === T_CLASS) {
                     for ($j=$i+1, $jMax = \count($tokens); $j< $jMax; $j++) {
                         if ($tokens[$j] === '{') {
-                            $class = $tokens[$i+2][1];
+                            $class = $tokens[$i+2][1] ?? '';
                         }
                     }
                 }

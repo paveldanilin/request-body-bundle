@@ -37,7 +37,7 @@ class DebugCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $table = new Table($output);
-        $table->setHeaders(['Class', 'Method', 'Bind Param', 'Validation Context']);
+        $table->setHeaders(['Class', 'Method', 'Bind Param', 'Param Type', 'Validation Context']);
         $rows = [];
 
         /** @var ClassAnnotationInfo $classAnnotation */
@@ -46,12 +46,30 @@ class DebugCommand extends Command
             foreach ($classAnnotation->getMethods() as $methodName => $methodAnnotations) {
               foreach ($methodAnnotations as $methodAnnotation) {
                   if ($methodAnnotation instanceof RequestBody) {
-                      $rows[] = [$classAnnotation->getClass(), $methodName, $methodAnnotation->param, \implode(',', $methodAnnotation->validationGroups)];
+
+                      $reflectionMethod = new \ReflectionMethod($classAnnotation->getNamespace() . '\\' . $classAnnotation->getClass(), $methodName);
+                      $param = null;
+                      $paramHint = '';
+                      foreach ($reflectionMethod->getParameters() as $parameter) {
+                          if ($parameter->getName() === $methodAnnotation->param) {
+                              $param = $parameter;
+                              break;
+                          }
+                      }
+                      if (null !== $param && $param->hasType() && $param->getType() instanceof \ReflectionNamedType) {
+                          $paramHint = $param->getType()->getName();
+                      }
+
+                      $rows[] = [
+                          $classAnnotation->getClass(),
+                          $methodName,
+                          $methodAnnotation->param,
+                          $paramHint,
+                          \implode(',', $methodAnnotation->validationGroups)
+                      ];
                   }
               }
             }
-
-            $rows[] = new TableSeparator();
         }
 
         $table->setRows($rows)->render();
