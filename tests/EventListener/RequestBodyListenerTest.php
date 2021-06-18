@@ -11,7 +11,7 @@ use paveldanilin\RequestBodyBundle\Tests\RequestBodyTestCase;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
-class RequestBodyTestListenerTest extends RequestBodyTestCase
+class RequestBodyListenerTest extends RequestBodyTestCase
 {
     protected function setUp(): void
     {

@@ -63,7 +63,7 @@ final class AnnotationScanner implements AnnotationScannerInterface
             }
 
             $buffer .= \fread($fp, 2048);
-            $tokens = \token_get_all($buffer);
+            $tokens = @\token_get_all($buffer);
 
             if (\strpos($buffer, '{') === false) {
                 continue;

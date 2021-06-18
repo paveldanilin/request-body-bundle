@@ -142,6 +142,27 @@ public function editUser(int $userId, User $user): Response
 
 You can read [more](https://symfony.com/doc/4.4/validation.html) about a validation process.
 
+#### Debug
+
+The bundle comes with a handy console command which shows all controllers that use the @RequestBody annotation
+
+```
+$ php bin/console request-body:debug
+
+
++--------------------+----------------------+------------+--------------------+
+| Class              | Method               | Bind Param | Validation Context |
++--------------------+----------------------+------------+--------------------+
++--------------------+----------------------+------------+--------------------+
+| TestUserController | createUser           | user       | all                |
+| TestUserController | editUser             | user       | all                |
+| TestUserController | noTypeHint           |            | all                |
+| TestUserController | autoMap              |            | all                |
+| TestUserController | autoMapNoParams      |            | all                |
+| TestUserController | autoMapTooManyParams |            | all                |
++--------------------+----------------------+------------+--------------------+
+```
+
 #### Test
 - `composer test`
 
