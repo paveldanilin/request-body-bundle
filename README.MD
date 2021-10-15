@@ -150,17 +150,17 @@ The bundle comes with a handy console command which shows all controllers that u
 $ php bin/console request-body:debug
 
 
-+--------------------+----------------------+------------+--------------------+
-| Class              | Method               | Bind Param | Validation Context |
-+--------------------+----------------------+------------+--------------------+
-+--------------------+----------------------+------------+--------------------+
-| TestUserController | createUser           | user       | all                |
-| TestUserController | editUser             | user       | all                |
-| TestUserController | noTypeHint           |            | all                |
-| TestUserController | autoMap              |            | all                |
-| TestUserController | autoMapNoParams      |            | all                |
-| TestUserController | autoMapTooManyParams |            | all                |
-+--------------------+----------------------+------------+--------------------+
++--------------------+----------------------+---------------------------------------------------------------------------------------+----------------------------------------------------+--------------------+
+| Class              | Method               | Bind Param                                                                            | Param Type                                         | Validation Context |
++--------------------+----------------------+---------------------------------------------------------------------------------------+----------------------------------------------------+--------------------+
+| TestUserController | createUser           | user                                                                                  | paveldanilin\RequestBodyBundle\Tests\Fixtures\User | all                |
+| TestUserController | editUser             | Method does not have such parameter 'user'                                            |                                                    | all                |
+| TestUserController | noTypeHint           | The 'user' parameter does not have a type hint                                        |                                                    | all                |
+| TestUserController | autoMap              | user                                                                                  | paveldanilin\RequestBodyBundle\Tests\Fixtures\User | all                |
+| TestUserController | autoMapNoParams      | Could not autodetect parameter for body mapping. The method does not have parameters. |                                                    | all                |
+| TestUserController | autoMapTooManyParams | Could not autodetect parameter for body mapping. The method has too many parameters.  |                                                    | all                |
++--------------------+----------------------+---------------------------------------------------------------------------------------+----------------------------------------------------+--------------------+
+
 ```
 
 #### Test
