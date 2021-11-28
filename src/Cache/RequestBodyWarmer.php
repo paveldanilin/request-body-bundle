@@ -36,8 +36,11 @@ class RequestBodyWarmer implements CacheWarmerInterface
             foreach ($classInfo->getMethodNames() as $methodName) {
                 foreach ($classInfo->getMethodAnnotations($methodName) as $annotation) {
                     if ($annotation instanceof RequestBody) {
-                        $key = $classInfo->getReflection()->getName() . '_' . $methodName;
-                        print $key . "\n";
+                        $key = \md5($classInfo->getReflection()->getName() . '_' . $methodName);
+                        $reflectionMethod = new \ReflectionMethod($classInfo->getReflection()->getName(), $methodName);
+                        $cacheItem = $this->cacheSystem->getItem($key);
+                        $cacheItem->set($reflectionMethod);
+                        $this->cacheSystem->save($cacheItem);
                     }
                 }
             }
