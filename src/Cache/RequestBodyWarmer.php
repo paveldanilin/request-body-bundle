@@ -17,12 +17,12 @@ class RequestBodyWarmer implements CacheWarmerInterface
         $this->parameterBag = $parameterBag;
     }
 
-    public function isOptional(): bool
+    public function isOptional()
     {
         return true;
     }
 
-    public function warmUp(string $cacheDir): array
+    public function warmUp(string $cacheDir)
     {
         print '>>' . $cacheDir . "]]\n";
 
