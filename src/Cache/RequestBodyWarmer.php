@@ -22,7 +22,7 @@ class RequestBodyWarmer implements CacheWarmerInterface
         return true;
     }
 
-    public function warmUp(string $cacheDir)
+    public function warmUp($cacheDir)
     {
         print '>>' . $cacheDir . "]]\n";
 
