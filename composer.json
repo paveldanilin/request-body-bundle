@@ -18,17 +18,18 @@
 	"require": {
 		"php": ">=7.4",
 		"ext-json": "*",
+		"doctrine/annotations": "1.11.*|1.12.*|1.13.*",
 		"symfony/framework-bundle": "^4.4|^5.0",
 		"symfony/console": "^4.4|^5.0",
 		"symfony/validator": "^4.4|^5.0",
 		"symfony/serializer": "^4.4|^5.0",
+		"symfony/cache": "^4.4|^5.0",
 		"paveldanilin/reflection-scanner": "^0.0"
 	},
 	"require-dev": {
 		"roave/security-advisories": "dev-latest",
 		"phpunit/phpunit": "^9",
 		"phpstan/phpstan": "^0.12",
-		"doctrine/annotations": "1.11.*|1.12.*|1.13.*",
 		"doctrine/common": "3.1.0",
 		"doctrine/cache": "1.10.2",
 		"symfony/property-access": "^4.4|^5.0",
