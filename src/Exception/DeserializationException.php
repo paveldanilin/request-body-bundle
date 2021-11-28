@@ -1,7 +1,7 @@
 <?php
 
 
-namespace paveldanilin\RequestBodyBundle\Exception;
+namespace Pada\RequestBodyBundle\Exception;
 
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 

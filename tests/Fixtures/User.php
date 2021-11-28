@@ -1,7 +1,7 @@
 <?php
 
 
-namespace paveldanilin\RequestBodyBundle\Tests\Fixtures;
+namespace Pada\RequestBodyBundle\Tests\Fixtures;
 
 use Symfony\Component\Validator\Constraints as Assert;
 

@@ -1,13 +1,13 @@
 <?php
 
 
-namespace paveldanilin\RequestBodyBundle\Service;
+namespace Pada\RequestBodyBundle\Service;
 
 
 use Doctrine\Common\Annotations\Reader;
-use paveldanilin\RequestBodyBundle\Controller\Annotation\RequestBody;
-use paveldanilin\RequestBodyBundle\Exception\DeserializationException;
-use paveldanilin\RequestBodyBundle\Exception\ValidationException;
+use Pada\RequestBodyBundle\Controller\Annotation\RequestBody;
+use Pada\RequestBodyBundle\Exception\DeserializationException;
+use Pada\RequestBodyBundle\Exception\ValidationException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;

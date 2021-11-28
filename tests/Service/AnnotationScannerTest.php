@@ -1,29 +1,28 @@
 <?php
 
 
-namespace paveldanilin\RequestBodyBundle\Tests\Service;
+namespace Pada\RequestBodyBundle\Tests\Service;
 
 
-use Doctrine\Common\Annotations\AnnotationReader;
-use paveldanilin\RequestBodyBundle\Service\AnnotationScanner;
-use paveldanilin\RequestBodyBundle\Service\AnnotationScannerInterface;
+use Pada\Reflection\Scanner\Scanner;
+use Pada\Reflection\Scanner\ScannerInterface;
 use PHPUnit\Framework\TestCase;
 
 class AnnotationScannerTest extends TestCase
 {
     private string $scanDir;
-    private AnnotationScannerInterface $annotationScanner;
+    private ScannerInterface $annotationScanner;
 
     protected function setUp(): void
     {
         $this->scanDir = \dirname(__DIR__) . '/Fixtures';
-        $this->annotationScanner = new AnnotationScanner(new AnnotationReader());
+        $this->annotationScanner = new Scanner();
     }
 
     public function testScanIn(): void
     {
         $c = 0;
-        foreach ($this->annotationScanner->in($this->scanDir) as $classAnnotation) {
+        foreach ($this->annotationScanner->in($this->scanDir) as $classInfo) {
             $c++;
         }
 

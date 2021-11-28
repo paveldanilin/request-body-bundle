@@ -1,5 +1,5 @@
 {
-	"name": "paveldanilin/request-body-bundle",
+	"name": "pada/request-body-bundle",
 	"type": "symfony-bundle",
 	"description": "A Symfony RequestBody Bundle",
 	"keywords": [
@@ -22,28 +22,35 @@
 		"symfony/console": "^4.4|^5.0",
 		"symfony/validator": "^4.4|^5.0",
 		"symfony/serializer": "^4.4|^5.0",
-		"symfony/finder": "^4.4|^5.0"
+		"pada/reflection-scanner": "dev-main"
 	},
 	"require-dev": {
+		"roave/security-advisories": "dev-latest",
 		"phpunit/phpunit": "^9",
 		"phpstan/phpstan": "^0.12",
-		"doctrine/annotations": "1.11.1",
+		"doctrine/annotations": "1.11.*|1.12.*|1.13.*",
 		"doctrine/common": "3.1.0",
 		"doctrine/cache": "1.10.2",
 		"symfony/property-access": "^4.4|^5.0",
 		"symfony/yaml": "^4.4|^5.0"
 	},
+	"repositories": [
+		{
+			"type": "git",
+			"url": "https://github.com/paveldanilin/reflection-scanner.git"
+		}
+	],
 	"suggest": {
 		"symfony/property-access": "Allows using the ObjectNormalizer normalizer instead of writing a normalizer for each DTO"
 	},
 	"autoload": {
 		"psr-4": {
-			"paveldanilin\\RequestBodyBundle\\": "src"
+			"Pada\\RequestBodyBundle\\": "src/"
 		}
 	},
 	"autoload-dev": {
 		"psr-4": {
-			"paveldanilin\\RequestBodyBundle\\Tests\\": "tests"
+			"Pada\\RequestBodyBundle\\Tests\\": "tests/"
 		}
 	},
 	"config": {

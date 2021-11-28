@@ -1,7 +1,7 @@
 <?php
 
 
-namespace paveldanilin\RequestBodyBundle\DependencyInjection;
+namespace Pada\RequestBodyBundle\DependencyInjection;
 
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;

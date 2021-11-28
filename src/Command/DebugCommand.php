@@ -1,11 +1,11 @@
 <?php
 
 
-namespace paveldanilin\RequestBodyBundle\Command;
+namespace Pada\RequestBodyBundle\Command;
 
-use paveldanilin\RequestBodyBundle\ClassAnnotationInfo;
-use paveldanilin\RequestBodyBundle\Controller\Annotation\RequestBody;
-use paveldanilin\RequestBodyBundle\Service\AnnotationScannerInterface;
+use Pada\Reflection\Scanner\ClassInfo;
+use Pada\Reflection\Scanner\ScannerInterface;
+use Pada\RequestBodyBundle\Controller\Annotation\RequestBody;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
@@ -13,9 +13,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class DebugCommand extends Command
 {
-    protected static $defaultName = 'request-body:debug';
+    protected static $defaultName = 'debug:request-body';
 
-    private AnnotationScannerInterface $annotationScanner;
+    private ScannerInterface $reflectionScanner;
     private string $scanDir;
 
     public function setScanDir(string $scanDir): void
@@ -23,9 +23,9 @@ class DebugCommand extends Command
         $this->scanDir = $scanDir;
     }
 
-    public function setAnnotationScanner(AnnotationScannerInterface $annotationScanner): void
+    public function setReflectionScanner(ScannerInterface $reflectionScanner): void
     {
-        $this->annotationScanner = $annotationScanner;
+        $this->reflectionScanner = $reflectionScanner;
     }
 
     protected function configure(): void
@@ -39,19 +39,16 @@ class DebugCommand extends Command
         $table->setHeaders(['Class', 'Method', 'Bind Param', 'Param Type', 'Validation Context']);
         $rows = [];
 
-        /** @var ClassAnnotationInfo $classAnnotation */
-        foreach ($this->annotationScanner->in($this->scanDir) as $classAnnotation) {
+        /** @var ClassInfo $classInfo */
+        foreach ($this->reflectionScanner->in($this->scanDir) as $classInfo) {
 
-            foreach ($classAnnotation->getMethods() as $methodName => $methodAnnotations) {
-              foreach ($methodAnnotations as $methodAnnotation) {
+            foreach ($classInfo->getMethodNames() as $methodName) {
+              foreach ($classInfo->getMethodAnnotations($methodName) as $methodAnnotation) {
                   if (!($methodAnnotation instanceof RequestBody)) {
                       continue;
                   }
 
-                  $reflectionMethod = new \ReflectionMethod(
-                      $classAnnotation->getNamespace() . '\\' . $classAnnotation->getClass(),
-                      $methodName
-                  );
+                  $reflectionMethod = $classInfo->getReflection()->getMethod($methodName);
                   $reflectionParam = null;
                   $paramTypeHint = '';
                   [$paramError, $paramName] = $this->getBindParamInfo($methodAnnotation->param, $reflectionMethod);
@@ -82,7 +79,7 @@ class DebugCommand extends Command
                   }
 
                   $rows[] = [
-                      $output->isVerbose() ? $classAnnotation->getNamespace() . '\\' . $classAnnotation->getClass() : $classAnnotation->getClass(),
+                      $classInfo->getReflection()->getName(),
                       $methodName,
                       $this->wrapText($paramError, $paramName),
                       $paramTypeHint,

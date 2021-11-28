@@ -1,10 +1,10 @@
 <?php
 
 
-namespace paveldanilin\RequestBodyBundle\ArgumentResolver;
+namespace Pada\RequestBodyBundle\ArgumentResolver;
 
-use paveldanilin\RequestBodyBundle\Controller\Annotation\RequestBody;
-use paveldanilin\RequestBodyBundle\Service\RequestBodyServiceInterface;
+use Pada\RequestBodyBundle\Controller\Annotation\RequestBody;
+use Pada\RequestBodyBundle\Service\RequestBodyServiceInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ArgumentValueResolverInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;

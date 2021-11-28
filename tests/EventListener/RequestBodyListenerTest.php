@@ -1,13 +1,13 @@
 <?php
 
 
-namespace paveldanilin\RequestBodyBundle\Tests\EventListener;
+namespace Pada\RequestBodyBundle\Tests\EventListener;
 
 
-use paveldanilin\RequestBodyBundle\Controller\Annotation\RequestBody;
-use paveldanilin\RequestBodyBundle\Tests\Fixtures\TestUserController;
-use paveldanilin\RequestBodyBundle\Tests\Fixtures\User;
-use paveldanilin\RequestBodyBundle\Tests\RequestBodyTestCase;
+use Pada\RequestBodyBundle\Controller\Annotation\RequestBody;
+use Pada\RequestBodyBundle\Tests\Fixtures\TestUserController;
+use Pada\RequestBodyBundle\Tests\Fixtures\User;
+use Pada\RequestBodyBundle\Tests\RequestBodyTestCase;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
@@ -55,7 +55,7 @@ class RequestBodyListenerTest extends RequestBodyTestCase
     public function testAutoMapNoParams(): void
     {
         $this->expectException(HttpException::class);
-        $this->expectExceptionMessage('Failed to process annotation @RequestBody at paveldanilin\RequestBodyBundle\Tests\Fixtures\TestUserController->autoMapNoParams(). Could not autodetect parameter for body mapping. The method does not have parameters.');
+        $this->expectExceptionMessage('Failed to process annotation @RequestBody at Pada\RequestBodyBundle\Tests\Fixtures\TestUserController->autoMapNoParams(). Could not autodetect parameter for body mapping. The method does not have parameters.');
 
         $request = $this->createUserJsonRequest();
 
@@ -67,7 +67,7 @@ class RequestBodyListenerTest extends RequestBodyTestCase
     public function testAutoMapToManyParams(): void
     {
         $this->expectException(HttpException::class);
-        $this->expectExceptionMessage('Failed to process annotation @RequestBody at paveldanilin\RequestBodyBundle\Tests\Fixtures\TestUserController->autoMapTooManyParams(<int>a,<int>b). Could not autodetect parameter for body mapping. The method has too many parameters.');
+        $this->expectExceptionMessage('Failed to process annotation @RequestBody at Pada\RequestBodyBundle\Tests\Fixtures\TestUserController->autoMapTooManyParams(<int>a,<int>b). Could not autodetect parameter for body mapping. The method has too many parameters.');
 
         $request = $this->createUserJsonRequest();
 
@@ -103,7 +103,7 @@ class RequestBodyListenerTest extends RequestBodyTestCase
     public function testParameterNotFound(): void
     {
         $this->expectException(HttpException::class);
-        $this->expectExceptionMessage('Failed to process annotation @RequestBody at paveldanilin\RequestBodyBundle\Tests\Fixtures\TestUserController->editUser(<paveldanilin\RequestBodyBundle\Tests\Fixtures\User>u). Parameter `user` not found.');
+        $this->expectExceptionMessage('Failed to process annotation @RequestBody at Pada\RequestBodyBundle\Tests\Fixtures\TestUserController->editUser(<Pada\RequestBodyBundle\Tests\Fixtures\User>u). Parameter `user` not found.');
 
         $request = $this->createUserJsonRequest();
 
@@ -115,7 +115,7 @@ class RequestBodyListenerTest extends RequestBodyTestCase
     public function testNoTypeHint(): void
     {
         $this->expectException(HttpException::class);
-        $this->expectExceptionMessage('Failed to process annotation @RequestBody at paveldanilin\RequestBodyBundle\Tests\Fixtures\TestUserController->noTypeHint(<>user). Parameter `user` does not have type hint.');
+        $this->expectExceptionMessage('Failed to process annotation @RequestBody at Pada\RequestBodyBundle\Tests\Fixtures\TestUserController->noTypeHint(<>user). Parameter `user` does not have type hint.');
 
         $request = $this->createUserJsonRequest();
 

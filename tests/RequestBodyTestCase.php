@@ -1,14 +1,14 @@
 <?php
 
 
-namespace paveldanilin\RequestBodyBundle\Tests;
+namespace Pada\RequestBodyBundle\Tests;
 
 
 use Doctrine\Common\Annotations\AnnotationReader;
-use paveldanilin\RequestBodyBundle\ArgumentResolver\RequestBodyResolver;
-use paveldanilin\RequestBodyBundle\Controller\Annotation\RequestBody;
-use paveldanilin\RequestBodyBundle\EventListener\RequestBodyListener;
-use paveldanilin\RequestBodyBundle\Service\RequestBodyService;
+use Pada\RequestBodyBundle\ArgumentResolver\RequestBodyResolver;
+use Pada\RequestBodyBundle\Controller\Annotation\RequestBody;
+use Pada\RequestBodyBundle\EventListener\RequestBodyListener;
+use Pada\RequestBodyBundle\Service\RequestBodyService;
 use PHPStan\Testing\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;

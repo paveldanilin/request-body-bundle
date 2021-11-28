@@ -1,14 +1,14 @@
 <?php
 
 
-namespace paveldanilin\RequestBodyBundle\Tests\ArgumentResolver;
+namespace Pada\RequestBodyBundle\Tests\ArgumentResolver;
 
 
-use paveldanilin\RequestBodyBundle\Controller\Annotation\RequestBody;
-use paveldanilin\RequestBodyBundle\Exception\ValidationException;
-use paveldanilin\RequestBodyBundle\Tests\Fixtures\TestUserController;
-use paveldanilin\RequestBodyBundle\Tests\Fixtures\User;
-use paveldanilin\RequestBodyBundle\Tests\RequestBodyTestCase;
+use Pada\RequestBodyBundle\Controller\Annotation\RequestBody;
+use Pada\RequestBodyBundle\Exception\ValidationException;
+use Pada\RequestBodyBundle\Tests\Fixtures\TestUserController;
+use Pada\RequestBodyBundle\Tests\Fixtures\User;
+use Pada\RequestBodyBundle\Tests\RequestBodyTestCase;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 
 class RequestBodyResolverTest extends RequestBodyTestCase

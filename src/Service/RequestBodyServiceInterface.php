@@ -1,9 +1,9 @@
 <?php
 
 
-namespace paveldanilin\RequestBodyBundle\Service;
+namespace Pada\RequestBodyBundle\Service;
 
-use paveldanilin\RequestBodyBundle\Controller\Annotation\RequestBody;
+use Pada\RequestBodyBundle\Controller\Annotation\RequestBody;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 

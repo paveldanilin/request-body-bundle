@@ -6,7 +6,7 @@ The Request body converter makes it possible to deserialize the request body int
 
 #### Install
 
-`composer require paveldanilin/request-body-bundle`
+`composer require pada/request-body-bundle`
 
 #### Usage
 
@@ -147,7 +147,7 @@ You can read [more](https://symfony.com/doc/4.4/validation.html) about a validat
 The bundle comes with a handy console command which shows all controllers that use the @RequestBody annotation
 
 ```
-$ php bin/console request-body:debug
+$ php bin/console debug:request-body
 
 
 +--------------------+----------------------+---------------------------------------------------------------------------------------+----------------------------------------------------+--------------------+

@@ -1,7 +1,7 @@
 <?php
 
 
-namespace paveldanilin\RequestBodyBundle\Controller\Annotation;
+namespace Pada\RequestBodyBundle\Controller\Annotation;
 
 use Doctrine\Common\Annotations\Annotation;
 

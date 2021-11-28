@@ -1,29 +1,29 @@
 services:
 
   # Console commands
-  paveldanilin\RequestBodyBundle\Command\DebugCommand:
+  Pada\RequestBodyBundle\Command\DebugCommand:
     public: true
     calls:
       - setScanDir: [ '%kernel.project_dir%/src' ]
-      - setAnnotationScanner: [ '@annotation_scanner' ]
+      - setReflectionScanner: [ '@reflection_scanner' ]
     tags:
-      - { name: 'console.command', command: 'request-body:debug' }
+      - { name: 'console.command', command: 'debug:request-body' }
 
   # Common services
-  annotation_scanner:
-    class: paveldanilin\RequestBodyBundle\Service\AnnotationScanner
+  reflection_scanner:
+    class: Pada\Reflection\Scanner\Scanner
     arguments: ['@annotations.reader']
 
   request_body_service:
-    class: paveldanilin\RequestBodyBundle\Service\RequestBodyService
+    class: Pada\RequestBodyBundle\Service\RequestBodyService
     arguments: ['@annotations.reader', '@serializer', '@validator']
 
-  paveldanilin\RequestBodyBundle\EventListener\RequestBodyListener:
+  Pada\RequestBodyBundle\EventListener\RequestBodyListener:
     arguments: ['@request_body_service']
     tags:
       - { name: kernel.event_listener, event: kernel.controller, priority: 240 }
 
-  paveldanilin\RequestBodyBundle\ArgumentResolver\RequestBodyResolver:
+  Pada\RequestBodyBundle\ArgumentResolver\RequestBodyResolver:
     arguments: ['@request_body_service']
     tags:
       - { name: controller.argument_value_resolver, priority: 240 }

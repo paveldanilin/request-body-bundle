@@ -1,10 +1,10 @@
 <?php
 
 
-namespace paveldanilin\RequestBodyBundle\Tests;
+namespace Pada\RequestBodyBundle\Tests;
 
 
-use paveldanilin\RequestBodyBundle\RequestBodyBundle;
+use Pada\RequestBodyBundle\RequestBodyBundle;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\HttpKernel\Kernel;

@@ -1,10 +1,10 @@
 <?php
 
 
-namespace paveldanilin\RequestBodyBundle\Tests\Fixtures;
+namespace Pada\RequestBodyBundle\Tests\Fixtures;
 
 
-use paveldanilin\RequestBodyBundle\Controller\Annotation\RequestBody;
+use Pada\RequestBodyBundle\Controller\Annotation\RequestBody;
 use Symfony\Component\HttpFoundation\Response;
 
 class TestUserController

@@ -1,6 +1,6 @@
 <?php
 
-namespace paveldanilin\RequestBodyBundle;
+namespace Pada\RequestBodyBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 

@@ -1,9 +1,9 @@
 <?php
 
 
-namespace paveldanilin\RequestBodyBundle\EventListener;
+namespace Pada\RequestBodyBundle\EventListener;
 
-use paveldanilin\RequestBodyBundle\Service\RequestBodyServiceInterface;
+use Pada\RequestBodyBundle\Service\RequestBodyServiceInterface;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 
 
