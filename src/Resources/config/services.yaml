@@ -29,6 +29,6 @@ services:
       - { name: controller.argument_value_resolver, priority: 240 }
 
   Pada\RequestBodyBundle\Cache\RequestBodyWarmer:
-    arguments: ['@reflection_scanner', '@parameter_bag']
+    arguments: ['@reflection_scanner', '@parameter_bag', '@cache.system']
     tags:
       - { name: kernel.cache_warmer, priority: 0 }
