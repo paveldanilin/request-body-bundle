@@ -1,5 +1,5 @@
 {
-	"name": "pada/request-body-bundle",
+	"name": "paveldanilin/request-body-bundle",
 	"type": "symfony-bundle",
 	"description": "A Symfony RequestBody Bundle",
 	"keywords": [
