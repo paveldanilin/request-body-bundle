@@ -22,7 +22,7 @@
 		"symfony/console": "^4.4|^5.0",
 		"symfony/validator": "^4.4|^5.0",
 		"symfony/serializer": "^4.4|^5.0",
-		"pada/reflection-scanner": "dev-main"
+		"paveldanilin/reflection-scanner": "^0.0"
 	},
 	"require-dev": {
 		"roave/security-advisories": "dev-latest",
@@ -34,12 +34,6 @@
 		"symfony/property-access": "^4.4|^5.0",
 		"symfony/yaml": "^4.4|^5.0"
 	},
-	"repositories": [
-		{
-			"type": "git",
-			"url": "https://github.com/paveldanilin/reflection-scanner.git"
-		}
-	],
 	"suggest": {
 		"symfony/property-access": "Allows using the ObjectNormalizer normalizer instead of writing a normalizer for each DTO"
 	},
