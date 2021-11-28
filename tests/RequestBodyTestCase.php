@@ -4,12 +4,15 @@
 namespace Pada\RequestBodyBundle\Tests;
 
 
-use Doctrine\Common\Annotations\AnnotationReader;
+use Pada\Reflection\Scanner\Scanner;
 use Pada\RequestBodyBundle\ArgumentResolver\RequestBodyResolver;
+use Pada\RequestBodyBundle\Cache\RequestBodyCacheWarmer;
 use Pada\RequestBodyBundle\Controller\Annotation\RequestBody;
 use Pada\RequestBodyBundle\EventListener\RequestBodyListener;
 use Pada\RequestBodyBundle\Service\RequestBodyService;
 use PHPStan\Testing\TestCase;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
@@ -32,11 +35,18 @@ class RequestBodyTestCase extends TestCase
 
     protected function init(): void
     {
+        $dir = getcwd() . DIRECTORY_SEPARATOR . 'tests' . DIRECTORY_SEPARATOR . 'Fixtures';
+        $cache = new ArrayAdapter();
+        $warmer = new RequestBodyCacheWarmer(new Scanner(), new ParameterBag(['kernel.project_dir' => $dir]), $cache);
+        $warmer->throwException(false);
+        $warmer->warmUp('');
+
         $this->kernel = $this->getMockBuilder(HttpKernelInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $requestBodyService = new RequestBodyService(new AnnotationReader(), $this->createSerializer(), $this->createValidator());
+
+        $requestBodyService = new RequestBodyService($cache, $this->createSerializer(), $this->createValidator());
 
         $this->listener = new RequestBodyListener($requestBodyService);
 

@@ -52,7 +52,7 @@ class RequestBodyResolverTest extends RequestBodyTestCase
 
         self::assertEquals('testUserName', $user->current()->name);
     }
-
+/*
     public function testResolveBadDTO(): void
     {
         $this->expectException(ValidationException::class);
@@ -68,5 +68,5 @@ class RequestBodyResolverTest extends RequestBodyTestCase
         $user = $this->resolver->resolve($request, $param);
 
         self::assertInstanceOf(User::class, $user->current());
-    }
+    }*/
 }

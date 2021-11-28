@@ -16,7 +16,7 @@ services:
 
   request_body_service:
     class: Pada\RequestBodyBundle\Service\RequestBodyService
-    arguments: ['@annotations.reader', '@serializer', '@validator']
+    arguments: ['@cache.system', '@serializer', '@validator']
 
   Pada\RequestBodyBundle\EventListener\RequestBodyListener:
     arguments: ['@request_body_service']
@@ -28,7 +28,7 @@ services:
     tags:
       - { name: controller.argument_value_resolver, priority: 240 }
 
-  Pada\RequestBodyBundle\Cache\RequestBodyWarmer:
+  Pada\RequestBodyBundle\Cache\RequestBodyCacheWarmer:
     arguments: ['@reflection_scanner', '@parameter_bag', '@cache.system']
     tags:
       - { name: kernel.cache_warmer, priority: 0 }
