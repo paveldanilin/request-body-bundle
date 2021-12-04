@@ -27,12 +27,17 @@ final class RequestBodyService implements RequestBodyServiceInterface
     private ValidatorInterface $validator;
     private LoggerInterface $logger;
 
-    public function __construct(CacheItemPoolInterface $cacheSystem, SerializerInterface $serializer, ValidatorInterface $validator, ?LoggerInterface $logger = null)
+    public function __construct(CacheItemPoolInterface $cacheSystem, SerializerInterface $serializer, ValidatorInterface $validator)
     {
         $this->cacheSystem = $cacheSystem;
         $this->serializer = $serializer;
         $this->validator = $validator;
-        $this->logger = $logger ?? new NullLogger();
+        $this->logger = new NullLogger();
+    }
+
+    public function setLogger(LoggerInterface $logger): void
+    {
+        $this->logger = $logger;
     }
 
     public function isRequestSupported(Request $request): bool

@@ -24,7 +24,7 @@ class RequestBodyExtension extends Extension
 
         if ($container->has('logger')) {
             $service = $container->getDefinition('request_body_service');
-            $service->replaceArgument(3, new Reference('logger'));
+            $service->addMethodCall('setLogger', [new Reference('logger')]);
         }
     }
 }
