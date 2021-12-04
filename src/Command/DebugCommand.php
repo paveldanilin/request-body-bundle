@@ -68,13 +68,11 @@ class DebugCommand extends Command
                   if (null !== $reflectionParam) {
                       if ($reflectionParam->hasType() && $reflectionParam->getType() instanceof \ReflectionNamedType) {
                           $paramTypeHint = $reflectionParam->getType()->getName();
+                      } else if (0 === $paramError) {
+                          $paramError = 1;
+                          $paramName = "The '$paramName' parameter does not have a type hint";
                       } else {
-                          if (0 === $paramError) {
-                              $paramError = 1;
-                              $paramName = "The '$paramName' parameter does not have a type hint";
-                          } else {
-                              $paramName .= "; Parameter does not have a type hint";
-                          }
+                          $paramName .= "; Parameter does not have a type hint";
                       }
                   }
 

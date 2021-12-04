@@ -18,6 +18,12 @@ services:
     class: Pada\RequestBodyBundle\Service\RequestBodyService
     arguments: ['@cache.system', '@serializer', '@validator']
 
+  request_body_cache_warmer:
+    class: Pada\RequestBodyBundle\Cache\RequestBodyCacheWarmer
+    arguments: ['%kernel.project_dir%/src', '@reflection_scanner', '@cache.system']
+    tags:
+      - { name: kernel.cache_warmer, priority: 0 }
+
   Pada\RequestBodyBundle\EventListener\RequestBodyListener:
     arguments: ['@request_body_service']
     tags:
@@ -27,8 +33,3 @@ services:
     arguments: ['@request_body_service']
     tags:
       - { name: controller.argument_value_resolver, priority: 240 }
-
-  Pada\RequestBodyBundle\Cache\RequestBodyCacheWarmer:
-    arguments: ['@reflection_scanner', '@parameter_bag', '@cache.system']
-    tags:
-      - { name: kernel.cache_warmer, priority: 0 }

@@ -5,21 +5,21 @@ namespace Pada\RequestBodyBundle\Cache;
 use Pada\Reflection\Scanner\ClassInfo;
 use Pada\Reflection\Scanner\ScannerInterface;
 use Pada\RequestBodyBundle\Controller\Annotation\RequestBody;
+use Pada\RequestBodyBundle\Util;
 use Psr\Cache\CacheItemPoolInterface;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
 
 class RequestBodyCacheWarmer implements CacheWarmerInterface
 {
     private ScannerInterface $scanner;
-    private ParameterBagInterface $parameterBag;
     private CacheItemPoolInterface $cacheSystem;
     private bool $throwException = true;
+    private string $scanDir;
 
-    public function __construct(ScannerInterface $scanner, ParameterBagInterface $parameterBag, CacheItemPoolInterface $cacheSystem)
+    public function __construct(string $scanDir, ScannerInterface $scanner, CacheItemPoolInterface $cacheSystem)
     {
+        $this->scanDir = $scanDir;
         $this->scanner = $scanner;
-        $this->parameterBag = $parameterBag;
         $this->cacheSystem = $cacheSystem;
     }
 
@@ -33,16 +33,13 @@ class RequestBodyCacheWarmer implements CacheWarmerInterface
         return true;
     }
 
-    /** @phpstan-ignore-next-line */
+    /** @phpstan-ignore-next-line
+     * @throws \Exception
+     */
     public function warmUp($cacheDir)
     {
-        $scanDir = $this->parameterBag->get('kernel.project_dir');
-        if (\is_dir($scanDir . DIRECTORY_SEPARATOR . 'src')) {
-            $scanDir .= DIRECTORY_SEPARATOR . 'src';
-        }
-
         /** @var ClassInfo $classInfo */
-        foreach ($this->scanner->in($scanDir) as $classInfo) {
+        foreach ($this->scanner->in($this->scanDir) as $classInfo) {
             foreach ($classInfo->getMethodNames() as $methodName) {
                 try {
                     $this->doWarmUp($classInfo, $methodName);
@@ -86,9 +83,11 @@ class RequestBodyCacheWarmer implements CacheWarmerInterface
             $requestBody->type = $this->getParameterType($reflectionMethod->getParameters(), $requestBody->param);
         }
 
-        $key = \md5($classInfo->getReflection()->getName() . '_' . $methodName);
+        if (false === \class_exists($requestBody->type)) {
+            throw new \LogicException("Type not found `$requestBody->type`.");
+        }
 
-        $cachedItem = $this->cacheSystem->getItem($key);
+        $cachedItem = $this->cacheSystem->getItem(Util::getCacheKey($classInfo->getReflection()->getName(), $methodName));
         $cachedItem->set($requestBody);
         $this->cacheSystem->save($cachedItem);
     }

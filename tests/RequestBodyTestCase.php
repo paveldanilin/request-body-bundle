@@ -37,7 +37,7 @@ class RequestBodyTestCase extends TestCase
     {
         $dir = getcwd() . DIRECTORY_SEPARATOR . 'tests' . DIRECTORY_SEPARATOR . 'Fixtures';
         $cache = new ArrayAdapter();
-        $warmer = new RequestBodyCacheWarmer(new Scanner(), new ParameterBag(['kernel.project_dir' => $dir]), $cache);
+        $warmer = new RequestBodyCacheWarmer($dir, new Scanner(), $cache);
         $warmer->throwException(false);
         $warmer->warmUp('');
 

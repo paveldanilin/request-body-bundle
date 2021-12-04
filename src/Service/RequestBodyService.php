@@ -7,7 +7,9 @@ namespace Pada\RequestBodyBundle\Service;
 use Pada\RequestBodyBundle\Controller\Annotation\RequestBody;
 use Pada\RequestBodyBundle\Exception\DeserializationException;
 use Pada\RequestBodyBundle\Exception\ValidationException;
+use Pada\RequestBodyBundle\Util;
 use Psr\Cache\CacheItemPoolInterface;
+use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -36,13 +38,7 @@ final class RequestBodyService implements RequestBodyServiceInterface
     public function processEvent($controller, string $method, ControllerEvent $controllerEvent): void
     {
         try {
-            if (\is_object($controller)) {
-                $claz = \get_class($controller);
-            } else {
-                $claz = $controller;
-            }
-            $key = \md5($claz . '_' . $method);
-            $cachedItem = $this->cacheSystem->getItem($key);
+            $cachedItem = $this->cacheSystem->getItem(Util::getCacheKey(\get_class($controller), $method));
 
             if (!$cachedItem->isHit()) {
                 return;
@@ -53,7 +49,7 @@ final class RequestBodyService implements RequestBodyServiceInterface
 
             $this->doProcess($controllerEvent, $requestBody);
 
-        } catch (\ReflectionException | \LogicException $e) {
+        } catch (InvalidArgumentException | \LogicException $e) {
             self::throwServerException($e, $controller, $method);
         }
     }
@@ -127,13 +123,9 @@ final class RequestBodyService implements RequestBodyServiceInterface
         }
 
         if (false === RequestBody::supports($requestBody->consumes)) {
-            throw new \LogicException(
+            throw new BadRequestHttpException(
                 "Unsupported content type `$requestBody->consumes`."
             );
-        }
-
-        if (false === \class_exists($requestBody->type)) {
-            throw new \LogicException("Type not found `$requestBody->type`.");
         }
 
         $event->getRequest()->attributes->set(RequestBody::REQUEST_ATTRIBUTE, $requestBody);
