@@ -10,6 +10,8 @@ use Pada\RequestBodyBundle\Exception\ValidationException;
 use Pada\RequestBodyBundle\Util;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Cache\InvalidArgumentException;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -17,17 +19,20 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
+
 final class RequestBodyService implements RequestBodyServiceInterface
 {
     private CacheItemPoolInterface $cacheSystem;
     private SerializerInterface $serializer;
     private ValidatorInterface $validator;
+    private LoggerInterface $logger;
 
-    public function __construct(CacheItemPoolInterface $cacheSystem, SerializerInterface $serializer, ValidatorInterface $validator)
+    public function __construct(CacheItemPoolInterface $cacheSystem, SerializerInterface $serializer, ValidatorInterface $validator, ?LoggerInterface $logger = null)
     {
         $this->cacheSystem = $cacheSystem;
         $this->serializer = $serializer;
         $this->validator = $validator;
+        $this->logger = $logger ?? new NullLogger();
     }
 
     public function isRequestSupported(Request $request): bool
@@ -37,12 +42,17 @@ final class RequestBodyService implements RequestBodyServiceInterface
 
     public function processEvent($controller, string $method, ControllerEvent $controllerEvent): void
     {
+        $controllerClassName = \get_class($controller);
+        $this->logger->debug('Trying to process @RequestBody', ['controller' => $controllerClassName, 'method' => $method]);
         try {
-            $cachedItem = $this->cacheSystem->getItem(Util::getCacheKey(\get_class($controller), $method));
+            $cachedItem = $this->cacheSystem->getItem(Util::getCacheKey($controllerClassName, $method));
 
             if (!$cachedItem->isHit()) {
+                $this->logger->debug('@RequestBody not found in cache, skip processing', ['controller' => $controllerClassName, 'method' => $method]);
                 return;
             }
+
+            $this->logger->debug('@RequestBody has been found, going to process', ['controller' => $controllerClassName, 'method' => $method]);
 
             /** @var RequestBody $requestBody */
             $requestBody = $cachedItem->get();
@@ -113,6 +123,7 @@ final class RequestBodyService implements RequestBodyServiceInterface
     private function doProcess(ControllerEvent $event, RequestBody $requestBody): void
     {
         if (empty($event->getRequest()->getContent())) {
+            $this->logger->error('Could not process @RequestBody since the request has an empty body');
             throw new BadRequestHttpException('The request body is empty.');
         }
 
@@ -123,6 +134,7 @@ final class RequestBodyService implements RequestBodyServiceInterface
         }
 
         if (false === RequestBody::supports($requestBody->consumes)) {
+            $this->logger->error('Could not process @RequestBody since unsupported content type has been provided');
             throw new BadRequestHttpException(
                 "Unsupported content type `$requestBody->consumes`."
             );
