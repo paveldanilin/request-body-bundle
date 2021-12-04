@@ -22,9 +22,7 @@ class RequestBodyExtension extends Extension
         $cacheWarmer = $container->getDefinition('request_body_cache_warmer');
         $cacheWarmer->replaceArgument(0, $config['controller']['dir']);
 
-        if ($container->has('logger')) {
-            $service = $container->getDefinition('request_body_service');
-            $service->addMethodCall('setLogger', [new Reference('logger')]);
-        }
+        $service = $container->getDefinition('request_body_service');
+        $service->addMethodCall('setLogger', [new Reference('logger')]);
     }
 }
