@@ -139,7 +139,7 @@ final class RequestBodyService implements RequestBodyServiceInterface
         }
 
         if (false === RequestBody::supports($requestBody->consumes)) {
-            $this->logger->error('Could not process @RequestBody since unsupported content type has been provided');
+            $this->logger->error('Could not process request since unsupported content type has been provided. @RequestBody(' . $requestBody->consumes . ')');
             throw new BadRequestHttpException(
                 "Unsupported content type `$requestBody->consumes`."
             );
