@@ -156,6 +156,11 @@ final class RequestBodyService implements RequestBodyServiceInterface
             $requestContentType = $request->headers->get('Content-Type');
         }
 
+        if (!empty($requestContentType) && false !== \strpos($requestContentType, ';')) {
+            // application/json; charset=UTF-8
+            $requestContentType = \explode(';', $requestContentType)[0] ?? '';
+        }
+
         if (empty($requestContentType)) {
             throw new BadRequestHttpException(
                 "Could not detect media type by client request. Client must specify the `Content-Type` header."
